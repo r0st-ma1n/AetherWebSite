@@ -1,0 +1,77 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Визуальная IDE для разработки аудио-плагинов"
+msgstr "Visual IDE for audio plugin development"
+
+msgid "Возможности"
+msgstr "Features"
+
+msgid "Все возможности →"
+msgstr "All features →"
+
+msgid "Вся галерея →"
+msgstr "Full gallery →"
+
+msgid "Вся документация"
+msgstr "All documentation"
+
+msgid "Главная"
+msgstr "Home"
+
+msgid "Документация пока не добавлена."
+msgstr "Documentation hasn't been added yet."
+
+msgid "Документация"
+msgstr "Documentation"
+
+msgid "Как это выглядит"
+msgstr "What it looks like"
+
+msgid "Ключевые возможности"
+msgstr "Key features"
+
+msgid "Код генерируется сам."
+msgstr "The code writes itself."
+
+msgid "Контакты"
+msgstr "Contacts"
+
+msgid "Отправить"
+msgstr "Send"
+
+msgid "Пока ничего не добавлено."
+msgstr "Nothing has been added yet."
+
+msgid "Скриншоты скоро появятся."
+msgstr "Screenshots are coming soon."
+
+msgid "Скриншоты"
+msgstr "Screenshots"
+
+msgid "Смотреть возможности"
+msgstr "See the features"
+
+msgid "Собирайте интерфейс аудио-плагина мышью."
+msgstr "Build your audio plugin's interface with your mouse."
+
+msgid "визуальная IDE для аудио-плагинов"
+msgstr "visual IDE for audio plugins"
+
+msgid ""
+"Визуальная desktop-IDE для разработки аудио-плагинов: drag-and-drop дизайнер"
+" интерфейса, двусторонняя синхронизация с C++ кодом и встроенный редактор "
+"Monaco."
+msgstr ""
+"A visual desktop IDE for audio plugin development: a drag-and-drop UI "
+"designer, two-way synchronization with C++ code, and a built-in Monaco "
+"editor."
+
+msgid "Сообщение отправлено. Спасибо!"
+msgstr "Your message has been sent. Thank you!"

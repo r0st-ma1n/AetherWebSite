@@ -1,0 +1,16 @@
+{% extends "website/base.html" %}
+{% load i18n website_extras %}
+
+{% block title %}{% field doc "title" %} — AetherIDE{% endblock %}
+
+{% block content %}
+<section class="max-w-3xl mx-auto px-4 py-16">
+    <a href="{% url 'website:docs_list' %}" class="text-aether-accent2 hover:underline text-sm">
+        &larr; {% trans "Вся документация" %}
+    </a>
+    <h1 class="text-3xl font-bold text-white mt-4 mb-8">{% field doc "title" %}</h1>
+    <div class="text-slate-300 leading-relaxed space-y-4">
+        {% field doc "content" %}
+    </div>
+</section>
+{% endblock %}
