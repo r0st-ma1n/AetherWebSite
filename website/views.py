@@ -8,7 +8,7 @@ from .models import DocPage, Feature, Screenshot, SiteInfo
 
 def home(request):
     lang = get_language()
-    features = Feature.objects.filter(is_published=True)[:4]
+    features = Feature.objects.filter(is_published=True)
     screenshots = Screenshot.objects.filter(is_published=True)[:3]
     return render(
         request,

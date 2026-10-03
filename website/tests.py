@@ -114,11 +114,11 @@ class HomeViewTests(TestCase):
         self.assertContains(response, "Видна")
         self.assertNotContains(response, "Скрыта")
 
-    def test_home_page_limits_features_to_four(self):
+    def test_home_page_shows_all_published_features(self):
         for i in range(6):
             Feature.objects.create(title_ru=f"F{i}", title_en=f"F{i}", order=i)
         response = self.client.get(reverse("website:home"))
-        self.assertEqual(len(response.context["features"]), 4)
+        self.assertEqual(len(response.context["features"]), 6)
 
 
 class FeaturesViewTests(TestCase):
