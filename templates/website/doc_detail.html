@@ -1,15 +1,15 @@
 {% extends "website/base.html" %}
 {% load i18n website_extras %}
 
-{% block title %}{% field doc "title" %} — AetherIDE{% endblock %}
+{% block title %}{% field_text doc "title" %} — AetherIDE{% endblock %}
 
 {% block content %}
 <section class="max-w-3xl mx-auto px-4 py-16">
-    <a href="{% url 'website:docs_list' %}" class="text-aether-accent2 hover:underline text-sm">
+    <a href="{% url 'website:docs_list' %}" class="text-link text-sm">
         &larr; {% trans "Вся документация" %}
     </a>
-    <h1 class="text-3xl font-bold text-white mt-4 mb-8">{% field doc "title" %}</h1>
-    <div class="text-slate-300 leading-relaxed space-y-4">
+    <h1 class="page-title mt-4 mb-8">{% field doc "title" %}</h1>
+    <div class="prose prose-invert prose-slate max-w-none prose-a:text-aether-accent2 prose-headings:font-display prose-headings:font-medium">
         {% field doc "content" %}
     </div>
 </section>

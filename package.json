@@ -1,0 +1,12 @@
+{
+  "name": "aether-website",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -c frontend/tailwind.config.js -i frontend/site.css -o static/css/site.css --minify",
+    "watch:css": "tailwindcss -c frontend/tailwind.config.js -i frontend/site.css -o static/css/site.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "tailwindcss": "^3.4.17"
+  }
+}

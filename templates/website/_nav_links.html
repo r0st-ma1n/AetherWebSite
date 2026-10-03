@@ -1,0 +1,6 @@
+{% load i18n %}
+<a href="{% url 'website:home' %}" class="{{ link_class }}">{% trans "Главная" %}</a>
+<a href="{% url 'website:features' %}" class="{{ link_class }}">{% trans "Возможности" %}</a>
+<a href="{% url 'website:gallery' %}" class="{{ link_class }}">{% trans "Скриншоты" %}</a>
+<a href="{% url 'website:docs_list' %}" class="{{ link_class }}">{% trans "Документация" %}</a>
+<a href="{% url 'website:contacts' %}" class="{{ link_class }}">{% trans "Контакты" %}</a>

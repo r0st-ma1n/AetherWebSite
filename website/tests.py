@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import translation
 
 from .forms import ContactForm
 from .models import ContactMessage, DocPage, Feature, Screenshot, SiteInfo
@@ -203,6 +204,14 @@ class ContactsViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(ContactMessage.objects.count(), 0)
 
+    def test_english_form_labels_are_translated(self):
+        with translation.override("en"):
+            response = self.client.get("/en/contacts/")
+        self.assertContains(response, ">Name<")
+        self.assertContains(response, ">Message<")
+        self.assertNotContains(response, ">Имя<")
+        self.assertNotContains(response, ">Сообщение<")
+
 
 class LanguageSwitchTests(TestCase):
     def test_default_locale_is_russian(self):
@@ -210,6 +219,79 @@ class LanguageSwitchTests(TestCase):
         self.assertContains(response, "Возможности")
 
     def test_english_prefix_switches_locale(self):
-        response = self.client.get("/en/")
+        with translation.override("en"):
+            response = self.client.get("/en/")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Features")
+
+
+class FieldTemplateTagTests(TestCase):
+    def render(self, source, **context):
+        from django.template import Context, Template
+        return Template("{% load website_extras %}" + source).render(Context(context))
+
+    def test_field_keeps_html(self):
+        doc = DocPage(title_ru="<b>Начало</b>")
+        self.assertEqual(self.render('{% field doc "title" %}', doc=doc), "<b>Начало</b>")
+
+    def test_field_text_is_safe_inside_attributes(self):
+        shot = Screenshot(caption_ru='Окно "Дизайнер" & <i>код</i>')
+        html = self.render("""<img alt="{% field_text shot 'caption' %}">""", shot=shot)
+        self.assertEqual(html, '<img alt="Окно &quot;Дизайнер&quot; &amp; код">')
+
+    def test_field_text_decodes_entities_before_escaping(self):
+        shot = Screenshot(caption_ru="A &amp; B")
+        self.assertEqual(self.render("{% field_text shot 'caption' %}", shot=shot), "A &amp; B")
+
+
+class IconTemplateTagTests(TestCase):
+    def render(self, source, **context):
+        from django.template import Context, Template
+        return Template("{% load website_extras %}" + source).render(Context(context))
+
+    def test_known_icon_renders_svg(self):
+        html = self.render('{% icon "code" "w-5 h-5" %}')
+        self.assertTrue(html.startswith('<svg class="w-5 h-5"'))
+
+    def test_unknown_icon_falls_back_to_escaped_text(self):
+        html = self.render("{% icon name %}", name="🎛️<b>")
+        self.assertIn("🎛️&lt;b&gt;", html)
+        self.assertNotIn("<svg", html)
+
+    def test_seeded_features_use_svg_icons(self):
+        from .management.commands.seed_content import FEATURES
+        from .templatetags.website_extras import ICONS
+        for data in FEATURES:
+            self.assertIn(data["icon"], ICONS, data["title_en"])
+
+
+class LayoutTests(TestCase):
+    def test_uses_built_stylesheet_instead_of_tailwind_cdn(self):
+        response = self.client.get(reverse("website:home"))
+        self.assertContains(response, "css/site.css")
+        self.assertNotContains(response, "cdn.tailwindcss.com")
+
+    def test_mobile_menu_has_navigation_links(self):
+        html = self.client.get(reverse("website:home")).content.decode()
+        mobile_menu = html[html.index("<details"):html.index("</details>")]
+        self.assertIn('href="%s"' % reverse("website:contacts"), mobile_menu)
+
+    def test_footer_links_to_github_when_set(self):
+        SiteInfo.objects.update_or_create(pk=1, defaults={"github_url": "https://github.com/example/aether"})
+        response = self.client.get(reverse("website:features"))
+        self.assertContains(response, 'href="https://github.com/example/aether"')
+
+    def test_home_has_interactive_designer_demo(self):
+        response = self.client.get(reverse("website:home"))
+        self.assertContains(response, 'role="slider"', count=3)
+        self.assertContains(response, 'id="code-threshold"')
+
+    def test_mobile_menu_label_is_translated(self):
+        self.assertContains(self.client.get("/"), ">Меню<")
+        with translation.override("en"):
+            self.assertContains(self.client.get("/en/"), ">Menu<")
+
+    def test_html_lang_matches_active_language(self):
+        self.assertContains(self.client.get("/"), '<html lang="ru"')
+        with translation.override("en"):
+            self.assertContains(self.client.get("/en/"), '<html lang="en"')

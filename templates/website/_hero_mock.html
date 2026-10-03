@@ -1,0 +1,47 @@
+{% load i18n %}
+{# A working miniature of the IDE: turning a knob in the designer rewrites the C++ on the right. #}
+<figure class="mt-14 md:mt-16">
+    <div class="rounded-xl border border-white/10 bg-aether-surface shadow-[0_40px_120px_-40px_rgb(124_92_255_/_0.45)] overflow-hidden">
+        <div class="flex items-center justify-between gap-4 border-b border-white/10 px-4 h-10 text-xs text-slate-400">
+            <div class="flex items-center gap-2 min-w-0">
+                {% include "website/_logo_mark.html" with mark_class="w-4 h-4 shrink-0" %}
+                <span class="truncate">Compressor.aether</span>
+            </div>
+            <span class="flex items-center gap-1.5 shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-aether-accent2"></span>
+                {% trans "Синхронизировано" %}
+            </span>
+        </div>
+
+        <div class="grid lg:grid-cols-[1fr_1.15fr]">
+            <div class="flex flex-col border-b lg:border-b-0 lg:border-r border-white/10">
+                <div class="px-4 h-9 flex items-center border-b border-white/10 text-xs text-slate-300">{% trans "Дизайнер" %}</div>
+                <div class="designer-grid flex-1 flex items-center justify-center px-3 py-8 sm:p-10">
+                    <div class="w-full max-w-sm rounded-lg border border-white/10 bg-aether-panel p-3 sm:p-5">
+                        <div class="flex items-center justify-between mb-4 px-1">
+                            <span class="font-display text-xs font-medium tracking-wide text-slate-200">Compressor</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        </div>
+                        <div class="flex items-end justify-between gap-1">
+                            {% include "website/_knob.html" with name="threshold" label="Threshold" min="-60" max="0" value="-18.0" step="0.5" decimals="1" unit="dB" pct="70" angle="54" intro="-40" selected=True %}
+                            {% include "website/_knob.html" with name="ratio" label="Ratio" min="1" max="20" value="4.0" step="0.1" decimals="1" unit=":1" pct="16" angle="-92" %}
+                            {% include "website/_knob.html" with name="attack" label="Attack" min="0" max="100" value="10" step="1" decimals="0" unit="ms" pct="10" angle="-108" %}
+                            <div class="flex flex-col items-center gap-1 pb-1.5 pl-1" aria-hidden="true">
+                                <div class="relative w-2.5 h-20 rounded-sm bg-[#2a3040] overflow-hidden">
+                                    <div data-meter class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-emerald-400 via-emerald-400 to-amber-300 transition-[height] duration-150" style="height: 72%"></div>
+                                </div>
+                                <span class="text-[11px] text-slate-400">Out</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col min-w-0">
+                <div class="px-4 h-9 flex items-center border-b border-white/10 text-xs text-slate-300 font-mono">PluginEditor.cpp</div>
+<pre class="flex-1 overflow-x-auto py-4 font-mono text-[12px] sm:text-[13px] leading-6 text-slate-300"><code><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">1</span><span class="text-violet-300">#include</span> <span class="text-emerald-300">"PluginEditor.h"</span></span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">2</span></span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">3</span><span class="text-sky-300">CompressorEditor</span>::<span class="text-sky-300">CompressorEditor</span> (<span class="text-sky-300">Processor</span>&amp; p)</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">4</span>    : <span class="text-sky-300">AudioProcessorEditor</span> (&amp;p)</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">5</span>{</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">6</span>    threshold.setRange (<span class="text-orange-200">-60.0</span>, <span class="text-orange-200">0.0</span>);</span><span class="code-line block px-4" id="code-threshold"><span class="inline-block w-7 text-slate-600 select-none">7</span>    threshold.setValue (<span data-code-value class="text-aether-accent2">-18.0</span>);</span><span class="code-line block px-4" id="code-ratio"><span class="inline-block w-7 text-slate-600 select-none">8</span>    ratio.setValue (<span data-code-value class="text-aether-accent2">4.0</span>);</span><span class="code-line block px-4" id="code-attack"><span class="inline-block w-7 text-slate-600 select-none">9</span>    attack.setValue (<span data-code-value class="text-aether-accent2">10</span>);</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">10</span>    setSize (<span class="text-orange-200">360</span>, <span class="text-orange-200">200</span>);</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">11</span>}</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">12</span></span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">13</span><span class="text-violet-300">void</span> <span class="text-sky-300">CompressorEditor</span>::resized()</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">14</span>{</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">15</span>    threshold.setBounds (<span class="text-orange-200">24</span>, <span class="text-orange-200">48</span>, <span class="text-orange-200">72</span>, <span class="text-orange-200">72</span>);</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">16</span>    ratio.setBounds (<span class="text-orange-200">120</span>, <span class="text-orange-200">48</span>, <span class="text-orange-200">72</span>, <span class="text-orange-200">72</span>);</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">17</span>    attack.setBounds (<span class="text-orange-200">216</span>, <span class="text-orange-200">48</span>, <span class="text-orange-200">72</span>, <span class="text-orange-200">72</span>);</span><span class="code-line block px-4"><span class="inline-block w-7 text-slate-600 select-none">18</span>}</span></code></pre>
+            </div>
+        </div>
+    </div>
+    <figcaption class="mt-4 text-sm text-slate-500">{% trans "Покрутите ручки мышью или стрелками: значения сразу появляются в коде." %}</figcaption>
+</figure>

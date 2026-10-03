@@ -13,12 +13,6 @@ msgstr "Visual IDE for audio plugin development"
 msgid "Возможности"
 msgstr "Features"
 
-msgid "Все возможности →"
-msgstr "All features →"
-
-msgid "Вся галерея →"
-msgstr "Full gallery →"
-
 msgid "Вся документация"
 msgstr "All documentation"
 
@@ -36,9 +30,6 @@ msgstr "What it looks like"
 
 msgid "Ключевые возможности"
 msgstr "Key features"
-
-msgid "Код генерируется сам."
-msgstr "The code writes itself."
 
 msgid "Контакты"
 msgstr "Contacts"
@@ -75,3 +66,53 @@ msgstr ""
 
 msgid "Сообщение отправлено. Спасибо!"
 msgstr "Your message has been sent. Thank you!"
+
+#: templates/website/base.html:41
+msgid "Меню"
+msgstr "Menu"
+
+msgid "Код на C++ пишется сам."
+msgstr "The C++ code writes itself."
+
+msgid "Все возможности"
+msgstr "All features"
+
+msgid "Вся галерея"
+msgstr "Full gallery"
+
+msgid "Синхронизировано"
+msgstr "In sync"
+
+msgid "Дизайнер"
+msgstr "Designer"
+
+msgid "Покрутите ручки мышью или стрелками: значения сразу появляются в коде."
+msgstr ""
+"Turn the knobs with the mouse or arrow keys: the values show up in the code "
+"right away."
+
+msgid "Попробуйте AetherIDE"
+msgstr "Try AetherIDE"
+
+msgid "Начните с документации или задайте вопрос: ответим на почту."
+msgstr "Start with the documentation or ask a question: we reply by email."
+
+msgid "Открыть документацию"
+msgstr "Open the documentation"
+
+msgid "Задать вопрос"
+msgstr "Ask a question"
+
+msgid "Закрыть"
+msgstr "Close"
+
+msgid "Открыть в полном размере"
+msgstr "Open full size"
+
+#: website/forms.py
+msgid "Имя"
+msgstr "Name"
+
+#: website/forms.py
+msgid "Сообщение"
+msgstr "Message"

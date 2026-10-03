@@ -1,0 +1,12 @@
+{% load i18n website_extras %}
+<figure>
+    <button type="button" data-lightbox data-full="{{ shot.image.url }}" data-caption="{% field_text shot 'caption' %}"
+        class="group block w-full overflow-hidden rounded-lg border border-white/10 bg-aether-surface cursor-zoom-in">
+        <img src="{{ shot.image.url }}" alt="{% field_text shot 'caption' %}" loading="lazy"
+             class="w-full aspect-[16/10] object-cover object-left-top transition duration-300 group-hover:opacity-90">
+        <span class="sr-only">{% trans "Открыть в полном размере" %}</span>
+    </button>
+    {% if show_caption %}{% if shot.caption_ru or shot.caption_en %}
+    <figcaption class="mt-3 text-sm text-slate-400">{% field shot "caption" %}</figcaption>
+    {% endif %}{% endif %}
+</figure>

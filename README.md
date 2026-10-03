@@ -1,31 +1,82 @@
 # AetherWebSite
 
-Сайт-визитка AetherIDE на Django (RU/EN), контент редактируется через админку.
+Сайт-визитка **AetherIDE** — визуальной IDE для аудио-плагинов. Django 6.1, PostgreSQL, Tailwind CSS, два языка (RU/EN). Весь контент — фичи, скриншоты, документация, контакты — редактируется через админку.
 
-## Запуск
+**Стек:** Python 3.13+ · Django 6.1 · PostgreSQL 16 · Tailwind CSS 3 (сборка через Node.js) · gunicorn + nginx + certbot в продакшене.
+
+## Локальный запуск
+
+Нужны Python 3.13+, Node.js 20+ и Docker (для Postgres).
 
 ```powershell
+# 1. Окружение
+python -m venv venv
 venv\Scripts\python -m pip install -r requirements.txt
-copy .env.example .env   # заполните под своё окружение
+copy .env.example .env            # значения по умолчанию подходят для локальной разработки
+
+# 2. База данных (PostgreSQL в Docker, порт 5432)
+docker compose up -d db
 venv\Scripts\python manage.py migrate
-venv\Scripts\python manage.py seed_content   # наполнить стартовым контентом (один раз)
+venv\Scripts\python manage.py seed_content      # стартовый контент, один раз
+venv\Scripts\python manage.py createsuperuser   # доступ в /admin/
+
+# 3. Стили
+npm install
+npm run build:css
+
+# 4. Сервер
 venv\Scripts\python manage.py runserver
 ```
 
-Сайт: http://127.0.0.1:8000/ (RU) и http://127.0.0.1:8000/en/ (EN)
-Админку создайте локально командой `manage.py createsuperuser` — логин и пароль нигде не хранятся в репозитории.
+| Адрес | Что там |
+|---|---|
+| http://127.0.0.1:8000/ | сайт на русском (язык по умолчанию, без префикса) |
+| http://127.0.0.1:8000/en/ | английская версия |
+| http://127.0.0.1:8000/admin/ | админка |
 
-### Переменные окружения (`.env`)
+Логин и пароль админа нигде в репозитории не хранятся — создайте их сами через `createsuperuser`.
 
-`SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS`, настройки БД (`DB_*`) и почты (`EMAIL_*`) читаются из `.env` (см. `.env.example`). Файл `.env` не коммитится.
+### Стили (Tailwind)
 
-### Тесты
+`static/css/site.css` генерируется из шаблонов и не коммитится. Исходники — `frontend/site.css` и `frontend/tailwind.config.js`.
+
+```powershell
+npm run build:css    # разовая сборка (минифицированная)
+npm run watch:css    # пересборка при изменении шаблонов — держите открытой во время вёрстки
+```
+
+Если на странице нет стилей — скорее всего, CSS не собран. В Docker-образе он собирается автоматически.
+
+### Без Docker
+
+Для быстрого просмотра можно обойтись без Postgres — укажите SQLite в `.env`:
+
+```ini
+DB_ENGINE=django.db.backends.sqlite3
+DB_NAME=db.sqlite3
+```
+
+## Переменные окружения
+
+Все настройки читаются из `.env` (шаблон — `.env.example`). Сам `.env` не коммитится.
+
+| Переменная | Назначение |
+|---|---|
+| `SECRET_KEY` | секретный ключ Django; для продакшена сгенерируйте новый (команда есть в `.env.example`) |
+| `DEBUG` | `True` локально, `False` в продакшене |
+| `ALLOWED_HOSTS` | домены через запятую, например `aetheride.ru,www.aetheride.ru` |
+| `DB_ENGINE`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` | подключение к БД; по умолчанию Postgres на `localhost:5432` |
+| `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS` | почта; по умолчанию письма печатаются в консоль |
+
+`docker compose` тоже читает `.env` и подставляет `$VAR`, поэтому буквальный `$` в значениях экранируйте как `$$`.
+
+## Тесты
 
 ```powershell
 venv\Scripts\python manage.py test
 ```
 
-По умолчанию тесты используют ту же БД, что указана в `.env` (Postgres). Чтобы прогнать их без поднятого Postgres — на sqlite в памяти:
+Тесты используют БД из `.env` (Postgres должен быть поднят). Прогнать без Postgres, на SQLite в памяти:
 
 ```powershell
 $env:DB_ENGINE = "django.db.backends.sqlite3"
@@ -33,13 +84,62 @@ $env:DB_NAME = ":memory:"
 venv\Scripts\python manage.py test
 ```
 
-## Структура
+## Продакшен (Docker)
 
-- `website/` — приложение: модели `Feature`, `Screenshot`, `DocPage`, `SiteInfo`, `ContactMessage`, всё редактируется в `/admin/`
-- `templates/website/` — шаблоны (Tailwind CSS через CDN)
-- `locale/en/` — английский перевод статических строк интерфейса (заголовки меню, кнопки)
-- `website/management/commands/seed_content.py` — сидинг стартовых фич/документации
+`docker-compose.prod.yml` поднимает четыре сервиса: `db` (Postgres), `web` (Django + gunicorn), `nginx` (раздаёт статику и медиа, проксирует на `web`) и `certbot` (сертификаты Let's Encrypt).
+
+```bash
+# на сервере, в .env: DEBUG=False, свой SECRET_KEY, ALLOWED_HOSTS, пароль БД
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml exec web python manage.py seed_content
+docker compose -f docker-compose.prod.yml exec web python manage.py createsuperuser
+```
+
+При старте контейнер `web` сам выполняет `migrate` и `collectstatic` (см. `entrypoint.sh`). Tailwind собирается на отдельной стадии Dockerfile.
+
+**HTTPS.** Сначала работает только `nginx/conf.d/app-http.conf` (порт 80 и ACME-challenge). После выпуска сертификата:
+
+```bash
+docker compose -f docker-compose.prod.yml run --rm certbot certonly --webroot -w /var/www/certbot -d aetheride.ru -d www.aetheride.ru
+mv nginx/conf.d/app-http.conf nginx/conf.d/app-http.conf.disabled
+mv nginx/conf.d/app-ssl.conf.disabled nginx/conf.d/app-ssl.conf
+docker compose -f docker-compose.prod.yml restart nginx
+```
+
+## Структура проекта
+
+```
+aether_site/          настройки Django, корневые URL (i18n_patterns, RU без префикса)
+website/
+  models.py           Feature, Screenshot, DocPage, SiteInfo (синглтон), ContactMessage
+  views.py, urls.py   страницы сайта
+  forms.py            форма обратной связи
+  context_processors.py  SiteInfo доступен во всех шаблонах
+  templatetags/       теги field/field_text (RU/EN-поле по языку) и icon (SVG-иконки)
+  management/commands/seed_content.py  стартовые фичи и документация
+templates/website/    шаблоны страниц; файлы с «_» — переиспользуемые фрагменты
+frontend/             исходники Tailwind (site.css, tailwind.config.js)
+static/               статика: js/site.js, img/, css/site.css (генерируется)
+locale/en/            английский перевод строк интерфейса
+nginx/conf.d/         конфиги nginx для продакшена
+```
 
 ## Разделы сайта
 
-Главная, Возможности, Скриншоты (загружаются в админке), Документация, Контакты (с формой обратной связи, сообщения сохраняются в админке).
+- **Главная** — hero, ключевые возможности, призыв к действию
+- **Возможности** (`/features/`) — список фич из админки
+- **Скриншоты** (`/gallery/`) — галерея с лайтбоксом, картинки загружаются в админке
+- **Документация** (`/docs/`, `/docs/<slug>/`) — страницы с HTML-контентом
+- **Контакты** (`/contacts/`) — форма обратной связи; сообщения сохраняются в админке
+
+## Контент и переводы
+
+У каждой модели есть пары полей `*_ru` / `*_en` — шаблон берёт нужное по текущему языку. Флаг «Опубликовано» скрывает запись с сайта, поле «Порядок» задаёт сортировку.
+
+Статические строки интерфейса (меню, кнопки) переводятся через gettext. После правки шаблонов:
+
+```powershell
+venv\Scripts\python manage.py makemessages -l en
+# отредактируйте locale/en/LC_MESSAGES/django.po
+venv\Scripts\python manage.py compilemessages
+```

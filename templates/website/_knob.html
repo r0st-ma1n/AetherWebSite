@@ -1,0 +1,24 @@
+{# One rotary control in the hero mock. pct and angle give the no-JS starting position. #}
+<div class="relative flex flex-col items-center gap-1 px-1.5 pt-2 pb-1.5{% if selected %} outline outline-1 outline-dashed outline-aether-accent2/70 rounded-sm{% endif %}">
+    {% if selected %}
+    <span class="absolute -left-[3px] -top-[3px] w-1.5 h-1.5 bg-aether-accent2"></span>
+    <span class="absolute -right-[3px] -top-[3px] w-1.5 h-1.5 bg-aether-accent2"></span>
+    <span class="absolute -left-[3px] -bottom-[3px] w-1.5 h-1.5 bg-aether-accent2"></span>
+    <span class="absolute -right-[3px] -bottom-[3px] w-1.5 h-1.5 bg-aether-accent2"></span>
+    {% endif %}
+    <div role="slider" tabindex="0" aria-label="{{ label }}"
+         aria-valuemin="{{ min }}" aria-valuemax="{{ max }}" aria-valuenow="{{ value }}" aria-valuetext="{{ value }} {{ unit }}"
+         data-knob data-min="{{ min }}" data-max="{{ max }}" data-value="{{ value }}"
+         data-step="{{ step }}" data-decimals="{{ decimals }}" data-unit="{{ unit }}"
+         data-target="code-{{ name }}"{% if intro %} data-intro="{{ intro }}"{% endif %}
+         class="w-14 h-14 sm:w-16 sm:h-16 cursor-ns-resize touch-none select-none rounded-full">
+        <svg viewBox="0 0 72 72" class="w-full h-full" aria-hidden="true">
+            <path d="M17.62 54.38A26 26 0 1 1 54.38 54.38" fill="none" stroke="#2a3040" stroke-width="5" stroke-linecap="round" pathLength="100"/>
+            <path data-knob-arc d="M17.62 54.38A26 26 0 1 1 54.38 54.38" fill="none" stroke="#7c5cff" stroke-width="5" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ pct }} 100"/>
+            <circle cx="36" cy="36" r="17" fill="#232938" stroke="rgb(255 255 255 / 0.08)"/>
+            <line data-knob-pointer x1="36" y1="36" x2="36" y2="24" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round" transform="rotate({{ angle }} 36 36)"/>
+        </svg>
+    </div>
+    <span class="text-[11px] text-slate-400">{{ label }}</span>
+    <span data-knob-readout class="font-mono text-[11px] text-aether-accent2 whitespace-nowrap">{{ value }}{% if unit|first != ":" %} {% endif %}{{ unit }}</span>
+</div>

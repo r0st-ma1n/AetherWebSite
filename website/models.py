@@ -7,7 +7,7 @@ class Feature(models.Model):
     icon = models.CharField(
         max_length=10,
         blank=True,
-        help_text="Emoji or short symbol shown next to the title, e.g. 🎛️",
+        help_text="Icon name: knob, sliders, code, sync, wave, layers, cursor, cpu, editor, package, plug, check. Any other text (e.g. an emoji) is shown as is.",
     )
     title_ru = models.CharField("Заголовок (RU)", max_length=200)
     title_en = models.CharField("Title (EN)", max_length=200)

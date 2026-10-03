@@ -1,59 +1,61 @@
-{% load i18n %}
+{% load i18n static %}{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AetherIDE{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        aether: {
-                            bg: '#0b0e14',
-                            surface: '#131722',
-                            accent: '#7c5cff',
-                            accent2: '#22d3ee',
-                        },
-                    },
-                },
-            },
-        };
-    </script>
+    <meta name="description" content="{% block meta_description %}{% trans "Визуальная IDE для разработки аудио-плагинов" %}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}AetherIDE{% endblock %}">
+    <meta property="og:description" content="{% trans "Визуальная IDE для разработки аудио-плагинов" %}">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@500;600&display=swap">
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+    <script src="{% static 'js/site.js' %}" defer></script>
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-aether-bg text-slate-200 min-h-screen flex flex-col">
 
     <header class="border-b border-white/10 bg-aether-surface/80 backdrop-blur sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
-            <a href="{% url 'website:home' %}" class="flex items-center gap-2 font-semibold text-lg text-white">
-                <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-aether-accent to-aether-accent2 flex items-center justify-center">🎛️</span>
+            <a href="{% url 'website:home' %}" class="flex items-center gap-2.5 font-display font-medium text-white">
+                {% include "website/_logo_mark.html" %}
                 AetherIDE
             </a>
 
             <nav class="hidden md:flex items-center gap-6 text-sm">
-                <a href="{% url 'website:home' %}" class="hover:text-white transition">{% trans "Главная" %}</a>
-                <a href="{% url 'website:features' %}" class="hover:text-white transition">{% trans "Возможности" %}</a>
-                <a href="{% url 'website:gallery' %}" class="hover:text-white transition">{% trans "Скриншоты" %}</a>
-                <a href="{% url 'website:docs_list' %}" class="hover:text-white transition">{% trans "Документация" %}</a>
-                <a href="{% url 'website:contacts' %}" class="hover:text-white transition">{% trans "Контакты" %}</a>
+                {% include "website/_nav_links.html" with link_class="hover:text-white transition" %}
             </nav>
 
-            <form action="{% url 'set_language' %}" method="post" class="flex items-center gap-1 text-xs">
-                {% csrf_token %}
-                <input name="next" type="hidden" value="{{ request.path }}">
-                {% get_current_language as CURRENT_LANGUAGE %}
-                {% get_available_languages as AVAILABLE_LANGUAGES %}
-                {% for code, name in AVAILABLE_LANGUAGES %}
-                    <button type="submit" name="language" value="{{ code }}"
-                        class="px-2 py-1 rounded uppercase font-medium transition
-                        {% if code == CURRENT_LANGUAGE %}bg-aether-accent text-white{% else %}text-slate-400 hover:text-white{% endif %}">
-                        {{ code }}
-                    </button>
-                {% endfor %}
-            </form>
+            <div class="flex items-center gap-3">
+                <form action="{% url 'set_language' %}" method="post" class="flex items-center gap-1 text-xs">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.path }}">
+                    {% get_current_language as CURRENT_LANGUAGE %}
+                    {% get_available_languages as AVAILABLE_LANGUAGES %}
+                    {% for code, name in AVAILABLE_LANGUAGES %}
+                        <button type="submit" name="language" value="{{ code }}"
+                            class="px-2 py-1 rounded uppercase font-medium transition
+                            {% if code == CURRENT_LANGUAGE %}bg-aether-accent text-white{% else %}text-slate-400 hover:text-white{% endif %}">
+                            {{ code }}
+                        </button>
+                    {% endfor %}
+                </form>
+
+                <details class="md:hidden group">
+                    <summary class="list-none [&::-webkit-details-marker]:hidden cursor-pointer rounded-lg p-2 text-slate-300 hover:text-white hover:bg-white/5">
+                        <span class="sr-only">{% trans "Меню" %}</span>
+                        <svg class="w-6 h-6 group-open:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+                        <svg class="w-6 h-6 hidden group-open:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
+                    </summary>
+                    <nav class="absolute inset-x-0 top-full border-b border-white/10 bg-aether-surface px-4 py-2 flex flex-col">
+                        {% include "website/_nav_links.html" with link_class="py-3 text-base hover:text-white" %}
+                    </nav>
+                </details>
+            </div>
         </div>
     </header>
 
@@ -71,10 +73,19 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="border-t border-white/10 mt-16">
-        <div class="max-w-6xl mx-auto px-4 py-8 text-sm text-slate-500 flex flex-col md:flex-row items-center justify-between gap-2">
-            <p>&copy; {% now "Y" %} AetherIDE.</p>
-            <p>{% trans "Визуальная IDE для разработки аудио-плагинов" %}</p>
+    <footer class="border-t border-white/10 mt-24">
+        <div class="max-w-6xl mx-auto px-4 py-10 text-sm text-slate-500 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                {% include "website/_logo_mark.html" with mark_class="w-6 h-6" %}
+                <p>&copy; {% now "Y" %} AetherIDE. {% trans "Визуальная IDE для разработки аудио-плагинов" %}</p>
+            </div>
+            <nav class="flex flex-wrap gap-x-6 gap-y-2">
+                <a href="{% url 'website:docs_list' %}" class="hover:text-white transition">{% trans "Документация" %}</a>
+                <a href="{% url 'website:contacts' %}" class="hover:text-white transition">{% trans "Контакты" %}</a>
+                {% if site_info.github_url %}
+                <a href="{{ site_info.github_url }}" class="hover:text-white transition" target="_blank" rel="noopener">GitHub</a>
+                {% endif %}
+            </nav>
         </div>
     </footer>
 </body>

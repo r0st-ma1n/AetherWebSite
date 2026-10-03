@@ -4,7 +4,7 @@ from website.models import DocPage, Feature, SiteInfo
 
 FEATURES = [
     {
-        "icon": "🖱️",
+        "icon": "cursor",
         "title_ru": "Drag-and-drop дизайнер интерфейса",
         "title_en": "Drag-and-drop UI designer",
         "description_ru": "Собирайте интерфейс плагина из готовых компонентов — Knob, Slider, Button — прямо на canvas, без единой строки кода.",
@@ -12,7 +12,7 @@ FEATURES = [
         "order": 1,
     },
     {
-        "icon": "🔄",
+        "icon": "sync",
         "title_ru": "Двусторонняя синхронизация с кодом",
         "title_en": "Two-way code synchronization",
         "description_ru": "Изменения в визуальном дизайнере сразу превращаются в синхронизированный C++ код — и наоборот.",
@@ -20,7 +20,7 @@ FEATURES = [
         "order": 2,
     },
     {
-        "icon": "🧩",
+        "icon": "layers",
         "title_ru": "Группировка, выравнивание, undo/redo",
         "title_en": "Grouping, alignment, undo/redo",
         "description_ru": "Выделяйте несколько компонентов рамкой, выравнивайте и распределяйте их группой. История изменений — до 100 шагов отмены.",
@@ -28,7 +28,7 @@ FEATURES = [
         "order": 3,
     },
     {
-        "icon": "💻",
+        "icon": "editor",
         "title_ru": "Встроенный редактор Monaco",
         "title_en": "Built-in Monaco editor",
         "description_ru": "Редактируйте C++ код прямо в IDE — с подсветкой синтаксиса, файловым проводником и live-обновлением.",
@@ -36,7 +36,7 @@ FEATURES = [
         "order": 4,
     },
     {
-        "icon": "🎚️",
+        "icon": "wave",
         "title_ru": "Собственный C++ фреймворк для аудио",
         "title_en": "A native C++ audio framework",
         "description_ru": "Aether Framework берёт на себя низкоуровневую обработку звука, чтобы вы сосредоточились на дизайне и логике плагина.",
@@ -44,7 +44,7 @@ FEATURES = [
         "order": 5,
     },
     {
-        "icon": "✅",
+        "icon": "check",
         "title_ru": "Валидация проектов",
         "title_en": "Project validation",
         "description_ru": "Файлы проекта .aether проверяются по JSON Schema — ошибки конфигурации видны сразу, а не во время сборки.",

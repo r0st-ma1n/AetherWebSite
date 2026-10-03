@@ -8,3 +8,5 @@ staticfiles/
 .git/
 .idea/
 *.log
+node_modules/
+static/css/site.css

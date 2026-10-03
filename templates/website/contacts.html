@@ -5,22 +5,22 @@
 
 {% block content %}
 <section class="max-w-3xl mx-auto px-4 py-16">
-    <h1 class="text-3xl font-bold text-white mb-8 text-center">{% trans "Контакты" %}</h1>
+    <h1 class="page-title mb-8">{% trans "Контакты" %}</h1>
 
     {% if site_info.about_ru or site_info.about_en %}
-    <div class="text-slate-300 leading-relaxed mb-10 text-center">
+    <div class="text-slate-300 leading-relaxed mb-8">
         {% field site_info "about" %}
     </div>
     {% endif %}
 
-    <div class="flex justify-center gap-6 mb-12 text-sm">
+    <div class="flex flex-wrap gap-6 mb-12 text-sm">
         {% if site_info.contact_email %}
-        <a href="mailto:{{ site_info.contact_email }}" class="text-aether-accent2 hover:underline">
+        <a href="mailto:{{ site_info.contact_email }}" class="text-link">
             {{ site_info.contact_email }}
         </a>
         {% endif %}
         {% if site_info.github_url %}
-        <a href="{{ site_info.github_url }}" class="text-aether-accent2 hover:underline" target="_blank" rel="noopener">
+        <a href="{{ site_info.github_url }}" class="text-link" target="_blank" rel="noopener">
             GitHub
         </a>
         {% endif %}
@@ -38,7 +38,7 @@
         </div>
         {% endfor %}
         <button type="submit"
-            class="px-6 py-3 rounded-lg bg-aether-accent text-white font-medium hover:opacity-90 transition">
+            class="btn-primary">
             {% trans "Отправить" %}
         </button>
     </form>

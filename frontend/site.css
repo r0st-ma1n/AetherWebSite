@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* One visible keyboard-focus style for every interactive element. */
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-aether-accent2;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-medium transition;
+  }
+  .btn-primary {
+    @apply btn bg-aether-accent text-white hover:bg-[#8d71ff];
+  }
+  .btn-ghost {
+    @apply btn border border-white/20 text-slate-200 hover:bg-white/5;
+  }
+  .page-title {
+    @apply font-display text-3xl font-medium tracking-tight text-white md:text-4xl;
+  }
+  .section-title {
+    @apply font-display text-xl font-medium tracking-tight text-white md:text-2xl;
+  }
+  .text-link {
+    @apply text-aether-accent2 underline-offset-4 hover:underline;
+  }
+
+  /* Designer canvas in the hero mock: a dot grid like the IDE's layout surface. */
+  .designer-grid {
+    background-image: radial-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  .code-line.is-live {
+    animation: code-flash 0.9s ease-out;
+  }
+}
+
+@keyframes code-flash {
+  from { background-color: rgb(34 211 238 / 0.22); }
+  to   { background-color: rgb(34 211 238 / 0.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .code-line.is-live { animation: none; }
+}
