@@ -85,9 +85,11 @@ jobs:
           script: |
             set -e
             cd "$DEPLOY_PATH"
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            # The server's link to ghcr.io is flaky (TLS handshake timeouts), so retry network steps.
+            retry() { for i in 1 2 3 4 5; do "$@" && return 0; echo "Attempt $i failed, retrying in 10s..."; sleep 10; done; return 1; }
+            retry sh -c 'echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin'
             export IMAGE_TAG
-            docker compose -f docker-compose.prod.yml pull web
+            retry docker compose -f docker-compose.prod.yml pull web
             docker compose -f docker-compose.prod.yml up -d --no-build
             # nginx resolves "web" once at startup; reload so it picks up the new container.
             docker compose -f docker-compose.prod.yml exec -T nginx nginx -s reload
