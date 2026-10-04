@@ -106,12 +106,14 @@ IMAGE_TAG=<sha> docker compose -f docker-compose.prod.yml up -d --no-build web
 docker compose -f docker-compose.prod.yml exec nginx nginx -s reload
 ```
 
-**HTTPS.** Сначала работает только `nginx/conf.d/app-http.conf` (порт 80 и ACME-challenge). После выпуска сертификата:
+**HTTPS.** В репозитории включён `nginx/conf.d/app-ssl.conf` — так работает боевой сервер. На новом сервере сертификата ещё нет, и nginx с этим конфигом не стартует, поэтому сначала включите HTTP-конфиг (порт 80 и ACME-challenge), выпустите сертификат и верните как было:
 
 ```bash
+mv nginx/conf.d/app-ssl.conf nginx/conf.d/app-ssl.conf.disabled
+mv nginx/conf.d/app-http.conf.disabled nginx/conf.d/app-http.conf
+docker compose -f docker-compose.prod.yml up -d nginx
 docker compose -f docker-compose.prod.yml run --rm certbot certonly --webroot -w /var/www/certbot -d aetheride.ru -d www.aetheride.ru
-mv nginx/conf.d/app-http.conf nginx/conf.d/app-http.conf.disabled
-mv nginx/conf.d/app-ssl.conf.disabled nginx/conf.d/app-ssl.conf
+git checkout -- nginx/conf.d && git clean -f nginx/conf.d
 docker compose -f docker-compose.prod.yml restart nginx
 ```
 
