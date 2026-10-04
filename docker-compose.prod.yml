@@ -10,6 +10,8 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   web:
+    # Built and pushed by .github/workflows/deploy.yml; IMAGE_TAG pins a commit for rollbacks.
+    image: ghcr.io/r0st-ma1n/aetherwebsite:${IMAGE_TAG:-latest}
     build: .
     restart: unless-stopped
     env_file: .env

@@ -97,6 +97,15 @@ docker compose -f docker-compose.prod.yml exec web python manage.py createsuperu
 
 При старте контейнер `web` сам выполняет `migrate` и `collectstatic` (см. `entrypoint.sh`). Tailwind собирается на отдельной стадии Dockerfile.
 
+**Автодеплой.** Каждый push в `master` запускает `.github/workflows/deploy.yml`: тесты → сборка образа и публикация в `ghcr.io/r0st-ma1n/aetherwebsite` (теги `latest` и SHA коммита) → по SSH на сервере `pull` + `up -d`. Нужны секреты репозитория: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PATH` (папка с `.env` и `nginx/` на сервере), `DEPLOY_SSH_KEY` (приватный ключ, публичный — в `~/.ssh/authorized_keys` на сервере). `docker-compose.prod.yml` при деплое перезаписывается версией из репозитория.
+
+Откат на прошлый коммит (на сервере):
+
+```bash
+IMAGE_TAG=<sha> docker compose -f docker-compose.prod.yml up -d --no-build web
+docker compose -f docker-compose.prod.yml exec nginx nginx -s reload
+```
+
 **HTTPS.** Сначала работает только `nginx/conf.d/app-http.conf` (порт 80 и ACME-challenge). После выпуска сертификата:
 
 ```bash
